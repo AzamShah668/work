@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Weather App</h1>
+</header>
+
+<main>
+    <form method="POST">
+        <input type="text" name="location" placeholder="Enter city name" required>
+        <input type="submit" value="Get Weather">
+    </form>
+
+    {% if error %}
+        <div class="weather-box">
+            <p style="color:red;">{{ error }}</p>
+        </div>
+    {% endif %}
+
+    {% if weather %}
+        <div class="weather-box">
+            <h2>Weather in {{ weather.city }}</h2>
+            <p>Temperature: {{ weather.temperature }}°C</p>
+            <p>Condition: {{ weather.condition }}</p>
+            <p>Humidity: {{ weather.humidity }}%</p>
+            <p>Wind Speed: {{ weather.windspeed }} m/s</p>
+        </div>
+    {% endif %}
+</main>
+
+<footer>
+    <p>© 2025 Weather App by Azam</p>
+</footer>
+
+</body>
+</html>
+
