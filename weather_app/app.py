@@ -27,5 +27,5 @@ def home():
                 error = f"Error: {str(e)}"
         return render_template('index.html', weather=weather_data, error=error)
 if __name__ == '__main__':
-    app.run(host="192.168.1.29", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
                 
