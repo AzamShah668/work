@@ -1,0 +1,73 @@
+/* --- Custom Styles for a Flashier Look --- */
+
+/* App Card Styling */
+.app-card {
+    /* More pronounced shadow for a 'floating' effect */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    /* Subtle background gradient for the whole card */
+    background: linear-gradient(145deg, #ffffff, #f9fafb);
+}
+
+/* Background Gradient for the Body */
+body {
+    /* Vibrant, clean background gradient */
+    background: linear-gradient(135deg, #e0f2fe 0%, #f7f9fb 100%);
+}
+
+/* Chat Container Styling */
+.chat-container {
+    min-height: 400px;
+    max-height: 70vh;
+    overflow-y: auto;
+    /* Custom scrollbar for aesthetics */
+    scrollbar-width: thin;
+    scrollbar-color: #3b82f6 #f1f1f1;
+}
+.chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+.chat-container::-webkit-scrollbar-thumb {
+    background-color: #3b82f6;
+    border-radius: 4px;
+}
+.chat-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Message Bubble Colors */
+.user-bubble {
+    /* Light emerald, visually distinct from AI */
+    background-color: #d1fae5;
+    color: #065f46;
+}
+.ai-bubble {
+    /* Light blue, softer than the button */
+    background-color: #eff6ff;
+    color: #1e40af;
+}
+
+/* Send Button Hover/Active Effects */
+.send-button {
+    transition: all 0.2s ease-in-out;
+}
+.send-button:hover {
+    /* Slightly lift and add shadow on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px -2px rgba(16, 185, 129, 0.4); /* Green shadow */
+}
+.send-button:active {
+    /* Push down effect on click */
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
+/* Loading Spinner */
+.loader {
+    border-top-color: #10b981; /* Emerald green for visibility */
+    animation: spin 1s linear infinite;
+    display: none;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

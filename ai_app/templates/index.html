@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini AI Assistant (Flask)</title>
+    <!-- Load Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="min-h-screen flex items-start justify-center p-4 sm:p-8">
+
+    <div class="w-full max-w-4xl bg-white shadow-2xl rounded-xl p-6 sm:p-10 border border-gray-100 mt-10">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-gray-900">
+                <span class="text-emerald-500">Azam's</span> AI Assistant
+            </h1>
+            <p class="mt-2 text-lg text-gray-500">
+                Ask a question and get a grounded response powered by Google Search.
+            </p>
+        </header>
+
+        <!-- Input Form -->
+        <div class="flex flex-col space-y-4">
+            <input
+                type="text"
+                id="userInput"
+                placeholder="e.g., What are the latest updates to the Gemini model?"
+                class="w-full p-4 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition duration-150 shadow-sm text-lg"
+                onkeydown="if(event.key === 'Enter') askAI()"
+            >
+            <button
+                id="askButton"
+                onclick="askAI()"
+                class="w-full sm:w-1/2 mx-auto bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition duration-200 ease-in-out shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-emerald-500 focus:ring-opacity-50 flex items-center justify-center disabled:opacity-50"
+            >
+                <span id="buttonText">Ask Gemini</span>
+                <div id="loadingIndicator" class="hidden w-5 h-5 border-2 border-white border-solid rounded-full spinner ml-3"></div>
+            </button>
+        </div>
+
+        <!-- Response Area -->
+        <div id="responseArea" class="mt-10 pt-6 border-t border-gray-200">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">AI Response</h2>
+            <div id="aiResponse" class="min-h-[100px] p-6 bg-gray-50 border border-gray-200 rounded-lg whitespace-pre-wrap text-gray-800 leading-relaxed transition-all duration-300">
+                Type a question above to start the conversation.
+            </div>
+            
+            <!-- Citation Area -->
+            <div id="citationArea" class="mt-4 hidden p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h3 class="font-bold text-sm text-yellow-800 mb-2">Sources Used (Grounding):</h3>
+                <ul id="sourceList" class="list-disc pl-5 text-sm text-yellow-700 space-y-1">
+                    <!-- Sources will be injected here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client-Side JavaScript -->
+    <script>
+        const userInput = document.getElementById('userInput');
+        const askButton = document.getElementById('askButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const aiResponse = document.getElementById('aiResponse');
+        const citationArea = document.getElementById('citationArea');
+        const sourceList = document.getElementById('sourceList');
+
+        async function askAI() {
+            const query = userInput.value.trim();
+            if (!query) return;
+
+            // 1. Disable input and show loading
+            userInput.disabled = true;
+            askButton.disabled = true;
+            buttonText.textContent = 'Thinking...';
+            loadingIndicator.classList.remove('hidden');
+            aiResponse.textContent = '...Generating response...';
+            citationArea.classList.add('hidden');
+            sourceList.innerHTML = '';
+
+            try {
+                // 2. Make POST request to Flask backend API endpoint
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || data.error) {
+                    throw new Error(data.error || `Server error (Status: ${response.status})`);
+                }
+
+                // 3. Update UI with response text
+                aiResponse.textContent = data.text || "Sorry, I couldn't generate a response.";
+
+                // 4. Handle citations (Grounding)
+                if (data.sources && data.sources.length > 0) {
+                    sourceList.innerHTML = ''; 
+                    data.sources.forEach(source => {
+                        const li = document.createElement('li');
+                        const link = document.createElement('a');
+                        link.href = source.uri;
+                        link.target = "_blank";
+                        link.rel = "noopener noreferrer";
+                        link.textContent = source.title || source.uri;
+                        link.classList.add('underline', 'hover:text-yellow-900', 'truncate', 'block');
+                        li.appendChild(link);
+                        sourceList.appendChild(li);
+                    });
+                    citationArea.classList.remove('hidden');
+                } else {
+                    citationArea.classList.add('hidden');
+                }
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                // Display user-friendly error from the server, or generic error
+                aiResponse.textContent = `Error: ${error.message}. Please check the server console for details.`;
+            } finally {
+                // 5. Re-enable input
+                userInput.disabled = false;
+                askButton.disabled = false;
+                buttonText.textContent = 'Ask Gemini';
+                loadingIndicator.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
