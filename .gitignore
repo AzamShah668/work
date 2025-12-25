@@ -1,5 +1,18 @@
+<<<<<<< HEAD
 .env
 __pycache__/
 *.pyc
 venv/
 *.db
+=======
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+db/*.sqlite3
+db/__pycache__/
+frontend/node_modules/
+backend/__pycache__/
+
+>>>>>>> 3ab062a (Initial commit: Dua App with Docker and Postgres)

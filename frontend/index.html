@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dua of the Day</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Dua of the Day 🤲</h1>
+    <div id="dua">Loading...</div>
+
+    <script>
+        // Automatically detect host so frontend works in Docker or localhost
+        const host = window.location.hostname; // works for localhost or VM IP
+        const backendUrl = "http://192.168.56.103:5000/dua";
+
+        fetch(backendUrl)
+            .then(response => {
+                if (!response.ok) throw new Error("Network response not ok");
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("dua").innerText = data.dua;
+            })
+            .catch(err => {
+                console.error("Error fetching dua:", err);
+                document.getElementById("dua").innerText = "Failed to load dua";
+            });
+    </script>
+</body>
+</html>
+
